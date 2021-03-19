@@ -18,14 +18,28 @@ export class ProductComponent implements OnInit {
   dataLoaded = false;
 
 
-  constructor(private productService: ProductService,private activatedRoute:ActivatedRoute) { }
+  constructor(private productService: ProductService,
+    private activatedRoute:ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.getProducts();
+    this.activatedRoute.params.subscribe(params=>{
+      if(params["categoryId"]){
+        this.getProductsbyCategory(params["categoryId"])
+      }else{
+        this.getProducts()
+      }
+    })
+    
   }
 
   getProducts() {
     this.productService.getProducts().subscribe(response => {
+      this.products = response.data
+      this.dataLoaded = true;
+    })
+  }
+  getProductsbyCategory(categoryId:number) {
+    this.productService.getProductsByCategory(categoryId).subscribe(response => {
       this.products = response.data
       this.dataLoaded = true;
     })
